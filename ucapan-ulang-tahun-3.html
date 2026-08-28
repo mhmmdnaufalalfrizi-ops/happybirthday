@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Untuk Kamu 🎂</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Italiana&family=Manrope:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+
+  /* ============================================================
+     CUSTOM DATA — ganti sesuai kebutuhanmu
+     ============================================================ */
+  :root{
+    --nama-penerima: "Sayang";
+    --tanggal: "28 Agustus";
+
+    --pink-black: #0a0508;
+    --pink-deep:  #240711;
+    --pink-mid:   #5c1030;
+    --hot-pink:   #ff2d78;
+    --rose:       #ff8fb3;
+    --gold:       #e8b4bc;
+    --cream:      #fdf1f4;
+    --ink:        #24070f;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background: var(--pink-black);
+    color: var(--cream);
+    font-family:'Manrope', sans-serif;
+    overflow-x:hidden;
+    height:100vh;
+    width:100vw;
+  }
+
+  .bg-glow{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(ellipse 55% 40% at 50% 10%, rgba(255,45,120,0.35), transparent 60%),
+      radial-gradient(ellipse 45% 35% at 90% 85%, rgba(255,143,179,0.14), transparent 60%),
+      radial-gradient(ellipse 45% 35% at 5% 90%, rgba(232,180,188,0.10), transparent 60%),
+      linear-gradient(180deg, var(--pink-black), var(--pink-deep) 50%, var(--pink-black));
+    animation: glowshift 14s ease-in-out infinite;
+  }
+  @keyframes glowshift{
+    0%,100%{ filter:brightness(1); }
+    50%{ filter:brightness(1.18); }
+  }
+
+  /* ---------- twinkling stars ---------- */
+  #stars{ position:fixed; inset:0; z-index:0; pointer-events:none; }
+  .star{
+    position:absolute; border-radius:50%; background:var(--cream);
+    animation: twinkle ease-in-out infinite;
+  }
+  @keyframes twinkle{
+    0%,100%{ opacity:0.15; transform:scale(0.8); }
+    50%{ opacity:0.9; transform:scale(1.3); }
+  }
+
+  /* ---------- floating ambient blobs (slow, alive) ---------- */
+  .blob{
+    position:fixed; z-index:0; pointer-events:none; filter:blur(40px); opacity:0.32; border-radius:50%;
+    background: linear-gradient(140deg, var(--hot-pink), var(--pink-mid));
+    animation: drift 14s ease-in-out infinite;
+  }
+  .blob.b1{ width:340px; height:340px; top:-80px; left:-100px; animation-duration:15s; }
+  .blob.b2{ width:260px; height:260px; bottom:-60px; right:-80px; opacity:0.22;
+    background: linear-gradient(140deg, var(--rose), var(--pink-black)); animation-duration:18s; }
+  .blob.b3{ width:200px; height:200px; top:40%; right:10%; opacity:0.16; animation-duration:12s; }
+  @keyframes drift{
+    0%,100%{ transform:translate(0,0) scale(1); }
+    50%{ transform:translate(24px,-28px) scale(1.08); }
+  }
+
+  #embers{ position:fixed; inset:0; z-index:1; pointer-events:none; }
+  .ember{
+    position:absolute; bottom:-10px; border-radius:50%;
+    background: radial-gradient(circle, var(--rose), transparent 70%);
+    opacity:0.6; animation: rise linear infinite;
+  }
+  @keyframes rise{
+    0%{ transform:translateY(0) translateX(0) rotate(0); opacity:0; }
+    10%{ opacity:0.7; }
+    100%{ transform:translateY(-110vh) translateX(var(--drift)) rotate(180deg); opacity:0; }
+  }
+
+  /* ---------- decorative floating emoji layer per screen ---------- */
+  .floaters{ position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:1; }
+  .floaters span{
+    position:absolute; font-size:1.4rem; opacity:0.55;
+    animation: bob ease-in-out infinite;
+  }
+  @keyframes bob{
+    0%,100%{ transform:translateY(0) rotate(-6deg); }
+    50%{ transform:translateY(-18px) rotate(6deg); }
+  }
+
+  /* ============================================================
+     SCREEN FRAMEWORK
+     ============================================================ */
+  .screen{
+    position:fixed; inset:0; z-index:5;
+    display:flex; flex-direction:column; align-items:center;
+    padding: 8vh 6vw 6vh;
+    overflow-y:auto;
+    opacity:0; visibility:hidden; pointer-events:none;
+    transition: opacity 0.5s ease;
+  }
+  .screen.active{
+    opacity:1; visibility:visible; pointer-events:auto;
+  }
+
+  .eyebrow{
+    font-family:'Italiana', serif; letter-spacing:0.35em; font-size:0.7rem;
+    color: var(--gold); text-transform:uppercase; margin-bottom:1.4rem; opacity:0.9;
+    text-align:center;
+    animation: fade-slide 0.7s ease both;
+  }
+  @keyframes fade-slide{ from{ opacity:0; transform:translateY(-8px);} to{opacity:0.9; transform:translateY(0);} }
+
+  .back-btn{
+    position:absolute; top:5vh; right:6vw; z-index:20;
+    display:flex; align-items:center; gap:0.5rem;
+    background:rgba(255,255,255,0.06); border:1px solid rgba(255,143,179,0.35);
+    color:var(--rose); font-family:'Manrope',sans-serif; font-size:0.78rem; letter-spacing:0.05em;
+    padding:0.55rem 1.1rem; border-radius:40px; cursor:pointer;
+    transition: background 0.25s ease, transform 0.25s ease;
+    animation: pulse-ring 3s ease-in-out infinite;
+  }
+  @keyframes pulse-ring{
+    0%,100%{ box-shadow:0 0 0 0 rgba(255,143,179,0.0); }
+    50%{ box-shadow:0 0 0 5px rgba(255,143,179,0.08); }
+  }
+  .back-btn:hover{ background:rgba(255,45,120,0.18); transform:translateX(-3px) scale(1.04); }
+  .back-btn:active{ transform:translateX(-1px) scale(0.96); }
+  .back-btn svg{ width:14px; height:14px; fill:var(--rose); }
+
+  /* ============================================================
+     SCREEN 1 — ENVELOPE COVER
+     ============================================================ */
+  #screen-envelope{ justify-content:center; cursor:pointer; }
+
+  .envelope{
+    position:relative; width:220px; height:150px; margin-bottom:2.2rem;
+    animation: floaty 3.6s ease-in-out infinite, sway 5.5s ease-in-out infinite;
+  }
+  @keyframes floaty{ 0%,100%{transform:translateY(0) rotate(var(--sway,0deg));} 50%{transform:translateY(-10px) rotate(var(--sway,0deg));} }
+  @keyframes sway{ 0%,100%{ --sway:-2deg; } 50%{ --sway:2deg; } }
+
+  .envelope:hover{ animation-play-state:paused; transform:scale(1.05); transition:transform 0.3s ease; }
+
+  .envelope .body{
+    position:absolute; inset:0; border-radius:8px;
+    background: linear-gradient(160deg, #7a1235, #2b0711);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 0 1px rgba(232,180,188,0.25);
+  }
+  .envelope .flap{
+    position:absolute; top:0; left:0; width:100%; height:78px;
+    background: linear-gradient(160deg, #b81c50, #5c1030);
+    clip-path: polygon(0 0, 100% 0, 50% 72%);
+    transform-origin: top center;
+    border-radius:8px 8px 0 0;
+  }
+  .envelope .seal{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:46px; height:46px; border-radius:50%; z-index:3;
+    background: radial-gradient(circle at 35% 30%, #ff9dc0, var(--hot-pink) 55%, #7a1235 100%);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 0 0 1px rgba(232,180,188,0.5), 0 6px 20px rgba(255,45,120,0.6);
+  }
+  .envelope .seal svg{ width:20px; height:20px; fill:var(--cream); animation: heartbeat 1.4s ease-in-out infinite; transform-origin:center; }
+  @keyframes heartbeat{
+    0%,100%{ transform:scale(1); }
+    25%{ transform:scale(1.18); }
+    40%{ transform:scale(0.96); }
+    55%{ transform:scale(1.12); }
+  }
+
+  .cover-title{
+    font-family:'Cormorant Garamond', serif; font-style:italic; font-weight:500;
+    font-size:clamp(1.6rem, 6vw, 2.6rem); color:var(--cream); line-height:1.3;
+    max-width:20ch; text-align:center;
+  }
+  .cover-sub{
+    margin-top:1.4rem; font-size:0.78rem; letter-spacing:0.08em; color:rgba(253,241,244,0.55);
+    text-align:center;
+  }
+  .tap-hint{
+    margin-top:3rem; font-family:'Italiana', serif; font-size:0.68rem; letter-spacing:0.3em;
+    text-transform:uppercase; color:var(--gold); animation: pulse 2.2s ease-in-out infinite;
+    text-align:center;
+  }
+  @keyframes pulse{ 0%,100%{opacity:0.35; letter-spacing:0.3em;} 50%{opacity:1; letter-spacing:0.38em;} }
+
+  /* ============================================================
+     SCREEN 2 — HBD CARD + tap for surprise
+     ============================================================ */
+  #screen-card{ justify-content:center; text-align:center; cursor:pointer; }
+
+  .hbd-deco{ font-size:2rem; margin-top:1.6rem; display:inline-block; animation: wiggle 2.4s ease-in-out infinite; }
+  @keyframes wiggle{
+    0%,100%{ transform:rotate(-8deg) scale(1); }
+    50%{ transform:rotate(8deg) scale(1.1); }
+  }
+
+  .hbd-title{
+    font-family:'Cormorant Garamond', serif; font-weight:600;
+    font-size:clamp(2.4rem, 10vw, 4rem); color:var(--cream); line-height:1.05;
+  }
+  .hbd-title em{
+    color:var(--hot-pink); font-style:italic; font-weight:500;
+    display:inline-block; animation: glimmer 2.6s ease-in-out infinite;
+  }
+  @keyframes glimmer{
+    0%,100%{ text-shadow:0 0 12px rgba(255,45,120,0.15); }
+    50%{ text-shadow:0 0 22px rgba(255,45,120,0.65); }
+  }
+  .hbd-date{
+    margin-top:1.2rem; font-family:'Italiana', serif; letter-spacing:0.2em; font-size:0.85rem; color:var(--gold);
+  }
+
+  .surprise-hint{
+    margin-top:3.4rem; font-family:'Italiana', serif; font-size:0.72rem; letter-spacing:0.3em;
+    text-transform:uppercase; color:var(--gold);
+    border-bottom:1px solid rgba(232,180,188,0.4); padding-bottom:0.3rem;
+    animation: pulse 2.2s ease-in-out infinite;
+  }
+
+  /* ============================================================
+     SCREEN 3 — CHOOSE THE SURPRISE (MENU)
+     ============================================================ */
+  #screen-menu{ justify-content:center; text-align:center; }
+
+  .menu-title{
+    font-family:'Cormorant Garamond', serif; font-style:italic; font-weight:500;
+    font-size:clamp(1.9rem, 7vw, 2.8rem); color:var(--cream); margin-bottom:0.6rem;
+  }
+  .menu-sub{ font-size:0.8rem; color:rgba(253,241,244,0.55); margin-bottom:3rem; }
+
+  .menu-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:1.2rem;
+    width:100%; max-width:420px;
+  }
+  .menu-card{
+    background: linear-gradient(160deg, rgba(255,45,120,0.2), rgba(36,7,17,0.4));
+    border:1px solid rgba(255,143,179,0.3); border-radius:14px;
+    padding:1.8rem 1rem; cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; gap:0.7rem;
+    transition: background 0.3s ease, border-color 0.3s ease;
+    animation: card-float 4s ease-in-out infinite;
+    animation-delay: var(--d, 0s);
+  }
+  .menu-card:nth-child(1){ --d:0s; }
+  .menu-card:nth-child(2){ --d:0.3s; }
+  .menu-card:nth-child(3){ --d:0.6s; }
+  .menu-card:nth-child(4){ --d:0.9s; }
+  @keyframes card-float{
+    0%,100%{ transform:translateY(0) rotate(0deg); }
+    50%{ transform:translateY(-8px) rotate(-1deg); }
+  }
+  .menu-card:hover{
+    background: linear-gradient(160deg, rgba(255,45,120,0.35), rgba(36,7,17,0.5));
+    border-color: var(--rose);
+    animation-play-state: paused;
+    transform:translateY(-10px) scale(1.05);
+  }
+  .menu-card:active{ transform:scale(0.96); }
+  .menu-card .icon{ font-size:1.8rem; display:inline-block; animation: icon-spin 5s ease-in-out infinite; animation-delay:var(--d,0s); }
+  @keyframes icon-spin{
+    0%,100%{ transform:rotate(-6deg) scale(1); }
+    50%{ transform:rotate(6deg) scale(1.12); }
+  }
+  .menu-card .label{
+    font-family:'Italiana', serif; font-size:0.85rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--cream);
+  }
+
+  /* ============================================================
+     SHARED SUB-SCREEN CONTENT STYLES
+     ============================================================ */
+  .sub-title{
+    font-family:'Cormorant Garamond', serif; font-style:italic; font-weight:500;
+    font-size:clamp(1.8rem, 6vw, 2.6rem); color:var(--cream); margin-bottom:2.2rem; text-align:center;
+  }
+
+  /* ---------- memory: polaroid gallery (8 photos) ---------- */
+  .polaroids{
+    display:grid; grid-template-columns:repeat(2, 1fr); gap:1.5rem 1.1rem;
+    width:100%; max-width:460px;
+  }
+  .polaroid{
+    background:var(--cream); padding:0.55rem 0.55rem 1.3rem; border-radius:2px;
+    box-shadow: 0 14px 30px rgba(0,0,0,0.45);
+    transform: rotate(var(--r,-2deg));
+    animation: sway-card 6s ease-in-out infinite;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes sway-card{
+    0%,100%{ transform: rotate(var(--r,-2deg)) translateY(0); }
+    50%{ transform: rotate(calc(var(--r,-2deg) * -1)) translateY(-6px); }
+  }
+  .polaroid:nth-child(2n){ margin-top:1.4rem; }
+  .polaroid:hover{ animation-play-state:paused; transform: rotate(0deg) scale(1.05); transition:transform 0.3s ease; }
+  .polaroid .frame{
+    aspect-ratio:1/1; overflow:hidden; position:relative;
+    background: repeating-linear-gradient(135deg, #f3dfe4, #f3dfe4 10px, #e9c7cf 10px, #e9c7cf 20px);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .polaroid img{ width:100%; height:100%; object-fit:cover; display:none; }
+  .polaroid img[src]:not([src=""]){ display:block; }
+  .frame .placeholder-label{
+    font-family:'Italiana', serif; font-size:0.6rem; letter-spacing:0.12em;
+    color:#8a5a68; text-transform:uppercase; text-align:center; padding:0 0.5rem;
+  }
+  .polaroid figcaption{
+    font-family:'Cormorant Garamond', serif; font-style:italic; color:var(--ink);
+    text-align:center; margin-top:0.6rem; font-size:0.85rem;
+  }
+
+  /* ---------- moment: message + photo ---------- */
+  .moment-photo{
+    width:100%; max-width:280px; aspect-ratio:4/5; margin:0 auto 2rem;
+    border-radius:8px; overflow:hidden; position:relative;
+    background: repeating-linear-gradient(135deg, #2b0711, #2b0711 10px, #3a0c1b 10px, #3a0c1b 20px);
+    box-shadow: 0 20px 45px rgba(0,0,0,0.55), 0 0 0 6px rgba(232,180,188,0.15);
+    display:flex; align-items:center; justify-content:center;
+    animation: float-photo 5s ease-in-out infinite;
+  }
+  @keyframes float-photo{ 0%,100%{ transform:translateY(0) rotate(-1deg);} 50%{ transform:translateY(-10px) rotate(1deg);} }
+  .moment-photo img{ width:100%; height:100%; object-fit:cover; display:none; }
+  .moment-photo img[src]:not([src=""]){ display:block; }
+  .moment-photo .placeholder-label{
+    font-family:'Italiana', serif; font-size:0.65rem; letter-spacing:0.15em; color:var(--rose);
+    text-transform:uppercase; text-align:center; padding:0 1rem;
+  }
+  .moment-letter{
+    max-width:420px; width:100%; background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    border:1px solid rgba(255,143,179,0.25); border-radius:10px; padding:1.8rem;
+  }
+  .moment-letter p{
+    font-family:'Cormorant Garamond', serif; font-size:1.12rem; line-height:1.75; color:var(--cream);
+  }
+  .moment-letter .signature{
+    margin-top:1.2rem; text-align:right; font-family:'Cormorant Garamond', serif;
+    font-style:italic; font-size:1.15rem; color:var(--rose);
+  }
+
+  /* ---------- playlist ---------- */
+  .playlist-video{
+    width:100%; max-width:480px; aspect-ratio:16/9; border-radius:10px; overflow:hidden;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.55); margin-bottom:1.2rem; background:#000;
+  }
+  .playlist-video iframe{ width:100%; height:100%; border:0; }
+  .playlist-link{
+    display:inline-block; margin-bottom:2.2rem; font-size:0.8rem; color:var(--rose);
+    text-decoration:none; border-bottom:1px solid rgba(255,143,179,0.4); padding-bottom:2px;
+    animation: link-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes link-pulse{ 0%,100%{ opacity:0.75; } 50%{ opacity:1; } }
+  .playlist-link:hover{ color:var(--cream); }
+  .playlist-photos{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:0.8rem; width:100%; max-width:460px;
+  }
+  .playlist-photos .frame{
+    aspect-ratio:1/1; border-radius:6px; overflow:hidden; position:relative;
+    background: repeating-linear-gradient(135deg, #2b0711, #2b0711 10px, #3a0c1b 10px, #3a0c1b 20px);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.45);
+    animation: sway-card 6s ease-in-out infinite;
+  }
+  .playlist-photos img{ width:100%; height:100%; object-fit:cover; display:none; }
+  .playlist-photos img[src]:not([src=""]){ display:block; }
+  .playlist-photos .placeholder-label{
+    font-family:'Italiana', serif; font-size:0.55rem; letter-spacing:0.1em; color:var(--rose);
+    text-transform:uppercase; text-align:center; padding:0 0.4rem;
+  }
+  .music-note-float{
+    position:absolute; font-size:1.2rem; opacity:0.7; animation: note-rise 4s ease-in infinite;
+    pointer-events:none;
+  }
+  @keyframes note-rise{
+    0%{ transform:translateY(0) translateX(0) rotate(0deg); opacity:0; }
+    15%{ opacity:0.8; }
+    100%{ transform:translateY(-140px) translateX(20px) rotate(25deg); opacity:0; }
+  }
+
+  /* ---------- gift: envelope you tap open ---------- */
+  #screen-gift .envelope-gift-wrap{
+    display:flex; flex-direction:column; align-items:center; cursor:pointer;
+  }
+  #giftEnvelope{ animation: floaty 3.6s ease-in-out infinite, wiggle-gift 2.6s ease-in-out infinite; }
+  @keyframes wiggle-gift{
+    0%,100%{ transform:rotate(-3deg); }
+    50%{ transform:rotate(3deg); }
+  }
+  .gift-note{
+    margin-top:2rem; max-width:420px; width:100%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    border:1px solid rgba(232,180,188,0.3); border-radius:10px; padding:1.8rem;
+    opacity:0; transform:translateY(16px) scale(0.94); transition: opacity 0.6s ease, transform 0.6s cubic-bezier(.34,1.56,.64,1);
+    text-align:center;
+  }
+  .gift-note.shown{ opacity:1; transform:translateY(0) scale(1); }
+  .gift-note p{
+    font-family:'Cormorant Garamond', serif; font-style:italic; font-size:1.2rem; color:var(--cream); line-height:1.7;
+  }
+  .gift-hint2{
+    margin-top:1.4rem; font-family:'Italiana', serif; font-size:0.65rem; letter-spacing:0.25em;
+    text-transform:uppercase; color:var(--gold); animation: pulse 2.2s ease-in-out infinite;
+  }
+
+  /* ---------- sound toggle ---------- */
+  #soundToggle{
+    position:fixed; top:5vh; left:6vw; z-index:30;
+    width:42px; height:42px; border-radius:50%;
+    background:rgba(255,255,255,0.06); border:1px solid rgba(255,143,179,0.35);
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    font-size:1.1rem; transition: background 0.25s ease, transform 0.25s ease;
+    animation: pulse-ring 3s ease-in-out infinite;
+  }
+  #soundToggle:hover{ background:rgba(255,45,120,0.18); transform:scale(1.08); }
+  #soundToggle:active{ transform:scale(0.92); }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+  }
+
+  @media (min-width:640px){
+    .polaroids{ grid-template-columns:repeat(4,1fr); }
+    .playlist-photos{ grid-template-columns:repeat(3,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+<div id="stars"></div>
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+<div class="blob b3"></div>
+<div id="embers"></div>
+
+<div id="soundToggle" title="mute/unmute suara">🔊</div>
+
+<!-- ================= SCREEN 1: ENVELOPE COVER ================= -->
+<div id="screen-envelope" class="screen active">
+  <div class="floaters">
+    <span style="top:14%; left:12%; animation-duration:4s;">💗</span>
+    <span style="top:22%; right:10%; animation-duration:5s; animation-delay:0.5s;">✨</span>
+    <span style="bottom:20%; left:16%; animation-duration:4.6s; animation-delay:1s;">🎀</span>
+    <span style="bottom:26%; right:14%; animation-duration:5.4s; animation-delay:1.5s;">💫</span>
+  </div>
+  <div class="eyebrow">sebuah kejutan kecil untuk</div>
+  <div class="envelope">
+    <div class="flap"></div>
+    <div class="body"></div>
+    <div class="seal">
+      <svg viewBox="0 0 24 24"><path d="M12 21s-7.2-4.6-9.6-9.1C.6 8.6 2 5 5.4 5c2 0 3.4 1.1 4.1 2.4C10.2 6.1 11.6 5 13.6 5 17 5 18.4 8.6 16.6 11.9 14.2 16.4 12 21 12 21z"/></svg>
+    </div>
+  </div>
+  <div class="cover-title">Sayang</div>
+  <div class="cover-sub">ada surat untukmu</div>
+  <div class="tap-hint">ketuk amplopnya</div>
+</div>
+
+<!-- ================= SCREEN 2: HBD CARD ================= -->
+<div id="screen-card" class="screen">
+  <div class="floaters">
+    <span style="top:16%; left:10%; animation-duration:4.2s;">🎈</span>
+    <span style="top:20%; right:12%; animation-duration:5.2s; animation-delay:0.4s;">🎉</span>
+    <span style="bottom:18%; left:14%; animation-duration:4.8s; animation-delay:0.8s;">💖</span>
+    <span style="bottom:24%; right:10%; animation-duration:5.6s; animation-delay:1.2s;">🎊</span>
+  </div>
+  <div class="hbd-deco">🎂✨</div>
+  <div class="hbd-title">Happy <em>Birthday</em><br>Sayang</div>
+  <div class="hbd-date">28 Agustus</div>
+  <div class="surprise-hint">tap for surprise</div>
+</div>
+
+<!-- ================= SCREEN 3: CHOOSE THE SURPRISE ================= -->
+<div id="screen-menu" class="screen">
+  <div class="menu-title">Choose the Surprise</div>
+  <div class="menu-sub">pilih salah satu di bawah ini</div>
+  <div class="menu-grid">
+    <div class="menu-card" data-target="screen-memory">
+      <div class="icon">📷</div>
+      <div class="label">Memory</div>
+    </div>
+    <div class="menu-card" data-target="screen-moment">
+      <div class="icon">💌</div>
+      <div class="label">Moment</div>
+    </div>
+    <div class="menu-card" data-target="screen-playlist">
+      <div class="icon">🎵</div>
+      <div class="label">Playlist</div>
+    </div>
+    <div class="menu-card" data-target="screen-gift">
+      <div class="icon">🎁</div>
+      <div class="label">Gift</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= SCREEN: MEMORY (8 foto) ================= -->
+<div id="screen-memory" class="screen">
+  <button class="back-btn" data-back="screen-menu">
+    <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6v12z"/></svg> Back
+  </button>
+  <div class="eyebrow">memory</div>
+  <div class="sub-title">Beberapa potret favoritku</div>
+  <div class="polaroids">
+    <!-- FOTO 1 — ganti src="" jadi src="foto1.jpg" (taruh file fotonya sefolder dgn HTML ini) -->
+    <figure class="polaroid" style="--r:-3deg; --d:0s">
+      <div class="frame"><img src="" alt=""><span class="placeholder-label">foto 1</span></div>
+      <figcaption>Ganti caption</figcaption>
+    </figure>
+    <!-- FOTO 2 -->
+    <figure class="polaroid" style="--r:2deg; --d:0.3s">
+      <div class="frame"><img src="" alt=""><span class="placeholder-label">foto 2</span></div>
+      <figcaption>Ganti caption</figcaption>
+    </figure>
+    <!-- FOTO 3 -->
+    <figure class="polaroid" style="--r:-2deg; --d:0.6s">
+      <div class="frame"><img src="" alt=""><span class="placeholder-label">foto 3</span></div>
+      <figcaption>Ganti caption</figcaption>
+    </figure>
+    <!-- FOTO 4 -->
+    <figure class="polaroid" style="--r:3deg; --d:0.9s">
+      <div class="frame"><img src="" alt=""><span class="placeholder-label">foto 4</span></div>
+      <figcaption>Ganti caption</figcaption>
+    </figure>
+    <!-- FOTO 5 -->
+    <figure class="polaroid" style="--r:-2.5deg; --d:0.2s">
+      <div class="frame"><img src="" alt=""><span class="placeholder-label">foto 5</span></div>
+      <figcaption>Ganti caption</figcaption>
+    </figure>
+    <!-- FOTO 6 -->
+    <figure class="polaroid" style="--r:1.5deg; --d:0.5s">
+      <div class="frame"><img src="" alt=""><span class="placeholder-label">foto 6</span></div>
+      <figcaption>Ganti caption</figcaption>
+    </figure>
+    <!-- FOTO 7 -->
+    <figure class="polaroid" style="--r:-1.5deg; --d:0.8s">
+      <div class="frame"><img src="" alt=""><span class="placeholder-label">foto 7</span></div>
+      <figcaption>Ganti caption</figcaption>
+    </figure>
+    <!-- FOTO 8 -->
+    <figure class="polaroid" style="--r:2.5deg; --d:1.1s">
+      <div class="frame"><img src="" alt=""><span class="placeholder-label">foto 8</span></div>
+      <figcaption>Ganti caption</figcaption>
+    </figure>
+  </div>
+</div>
+
+<!-- ================= SCREEN: MOMENT ================= -->
+<div id="screen-moment" class="screen">
+  <button class="back-btn" data-back="screen-menu">
+    <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6v12z"/></svg> Back
+  </button>
+  <div class="eyebrow">moment</div>
+  <div class="sub-title">Untuk hari spesialmu</div>
+  <!-- FOTO MOMENT — ganti src="" jadi src="nama-file-fotomu.jpg" -->
+  <div class="moment-photo">
+    <img src="" alt="">
+    <span class="placeholder-label">taruh foto di sini</span>
+  </div>
+  <div class="moment-letter">
+    <p>Selamat ulang tahun, sayang. Semoga di usia yang baru ini kamu makin bahagia, makin disayang,
+    dan semua mimpi-mimpimu perlahan jadi nyata. Terima kasih sudah jadi kamu yang selalu bikin hari-hariku
+    lebih berwarna.</p>
+    <div class="signature">— dengan sayang</div>
+  </div>
+</div>
+
+<!-- ================= SCREEN: PLAYLIST ================= -->
+<div id="screen-playlist" class="screen">
+  <button class="back-btn" data-back="screen-menu">
+    <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6v12z"/></svg> Back
+  </button>
+  <div class="floaters">
+    <div class="music-note-float" style="left:15%; bottom:10%; animation-delay:0s;">🎵</div>
+    <div class="music-note-float" style="left:45%; bottom:10%; animation-delay:1.3s;">🎶</div>
+    <div class="music-note-float" style="left:75%; bottom:10%; animation-delay:2.6s;">🎵</div>
+  </div>
+  <div class="eyebrow">playlist</div>
+  <div class="sub-title">Lagu untukmu</div>
+
+  <!-- VIDEO YOUTUBE — ganti ID di dua tempat (src iframe & href link) kalau mau ganti lagu -->
+  <div class="playlist-video">
+    <iframe src="https://www.youtube.com/embed/0fcsGS1dEro" title="playlist video"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen></iframe>
+  </div>
+  <a class="playlist-link" href="https://www.youtube.com/watch?v=0fcsGS1dEro" target="_blank" rel="noopener">buka di YouTube ↗</a>
+
+  <div class="playlist-photos">
+    <!-- FOTO PLAYLIST 1 -->
+    <div class="frame" style="--d:0s"><img src="" alt=""><span class="placeholder-label">foto</span></div>
+    <!-- FOTO PLAYLIST 2 -->
+    <div class="frame" style="--d:0.3s"><img src="" alt=""><span class="placeholder-label">foto</span></div>
+    <!-- FOTO PLAYLIST 3 -->
+    <div class="frame" style="--d:0.6s"><img src="" alt=""><span class="placeholder-label">foto</span></div>
+  </div>
+</div>
+
+<!-- ================= SCREEN: GIFT ================= -->
+<div id="screen-gift" class="screen">
+  <button class="back-btn" data-back="screen-menu">
+    <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6v12z"/></svg> Back
+  </button>
+  <div class="eyebrow">gift</div>
+  <div class="sub-title" style="margin-bottom:1rem;">Ketuk amplopnya</div>
+
+  <div class="envelope-gift-wrap" id="giftEnvelopeWrap">
+    <div class="envelope" id="giftEnvelope">
+      <div class="flap"></div>
+      <div class="body"></div>
+      <div class="seal">
+        <svg viewBox="0 0 24 24"><path d="M20 6h-4V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2H4a2 2 0 0 0-2 2v3a1 1 0 0 0 1 1h1v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9h1a1 1 0 0 0 1-1V8a2 2 0 0 0-2-2zM10 4h4v2h-4V4z"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="gift-note" id="giftNote">
+    <p>Ini hadiah kecil dariku untukmu — bukan soal besar atau kecilnya, tapi tanda kalau kamu selalu ada
+    di pikiranku. Semoga kamu suka, sayang. 🎁</p>
+  </div>
+  <div class="gift-hint2" id="giftHint">ketuk untuk membuka</div>
+</div>
+
+<script>
+  /* ================= SOUND EFFECTS (synthesized, no external files) ================= */
+  let audioCtx = null;
+  let soundOn = true;
+
+  function ctx(){
+    if(!audioCtx){ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+
+  function tone(freq, duration, type='sine', delay=0, gainPeak=0.18){
+    if(!soundOn) return;
+    const c = ctx();
+    const osc = c.createOscillator();
+    const gain = c.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, c.currentTime + delay);
+    gain.gain.setValueAtTime(0, c.currentTime + delay);
+    gain.gain.linearRampToValueAtTime(gainPeak, c.currentTime + delay + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + delay + duration);
+    osc.connect(gain).connect(c.destination);
+    osc.start(c.currentTime + delay);
+    osc.stop(c.currentTime + delay + duration + 0.05);
+  }
+
+  function sfxOpen(){ tone(523,0.18,'sine',0); tone(784,0.22,'sine',0.09); } // little chime up
+  function sfxClick(){ tone(660,0.09,'triangle',0); }
+  function sfxBack(){ tone(440,0.1,'triangle',0); }
+  function sfxGift(){ tone(587,0.16,'sine',0); tone(880,0.2,'sine',0.08); tone(1174,0.24,'sine',0.16); }
+
+  document.getElementById('soundToggle').addEventListener('click', (e) => {
+    e.stopPropagation();
+    soundOn = !soundOn;
+    document.getElementById('soundToggle').textContent = soundOn ? '🔊' : '🔇';
+    if(soundOn) tone(660,0.08,'sine',0,0.12);
+  });
+
+  /* ================= SCREEN NAVIGATION (simple fade) ================= */
+  function showScreen(id){
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  document.getElementById('screen-envelope').addEventListener('click', () => {
+    sfxOpen();
+    showScreen('screen-card');
+  }, { once:true });
+
+  document.getElementById('screen-card').addEventListener('click', () => {
+    sfxClick();
+    showScreen('screen-menu');
+  }, { once:true });
+
+  document.querySelectorAll('.menu-card').forEach(card => {
+    card.addEventListener('click', () => {
+      sfxClick();
+      showScreen(card.dataset.target);
+    });
+  });
+
+  document.querySelectorAll('.back-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      sfxBack();
+      showScreen(btn.dataset.back);
+    });
+  });
+
+  /* ================= GIFT ENVELOPE OPEN ================= */
+  const giftWrap = document.getElementById('giftEnvelopeWrap');
+  const giftNote = document.getElementById('giftNote');
+  const giftHint = document.getElementById('giftHint');
+  let giftOpened = false;
+  giftWrap.addEventListener('click', () => {
+    if(giftOpened) return;
+    giftOpened = true;
+    sfxGift();
+    giftNote.classList.add('shown');
+    giftHint.style.display = 'none';
+  });
+
+  /* ================= TWINKLING STARS ================= */
+  const starField = document.getElementById('stars');
+  const STAR_COUNT = 40;
+  for(let i=0;i<STAR_COUNT;i++){
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = 1 + Math.random()*2;
+    s.style.width = size+'px';
+    s.style.height = size+'px';
+    s.style.left = Math.random()*100+'vw';
+    s.style.top = Math.random()*100+'vh';
+    s.style.animationDuration = (2+Math.random()*4)+'s';
+    s.style.animationDelay = (Math.random()*4)+'s';
+    starField.appendChild(s);
+  }
+
+  /* ================= FLOATING EMBERS ================= */
+  const emberField = document.getElementById('embers');
+  const EMBER_COUNT = 20;
+  for(let i=0;i<EMBER_COUNT;i++){
+    const e = document.createElement('div');
+    e.className = 'ember';
+    const size = 3 + Math.random()*6;
+    e.style.width = size+'px';
+    e.style.height = size+'px';
+    e.style.left = Math.random()*100+'vw';
+    e.style.setProperty('--drift', (Math.random()*80-40)+'px');
+    e.style.animationDuration = (7+Math.random()*8)+'s';
+    e.style.animationDelay = (Math.random()*10)+'s';
+    emberField.appendChild(e);
+  }
+</script>
+
+</body>
+</html>
